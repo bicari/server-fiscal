@@ -1,8 +1,10 @@
 import socketio
 import asyncio
 from utils.buscarVentas import buscarVentas
+from utils.read_ini import loadConfigServer
 server = socketio.AsyncServer(logger=True, async_mode = 'asgi')
 app = socketio.ASGIApp(server)
+config  = loadConfigServer()
 
 
 class ServerNamespace(socketio.AsyncNamespace):
@@ -18,7 +20,7 @@ class ServerNamespace(socketio.AsyncNamespace):
         print('Welcome user', data)
 
 server.register_namespace(ServerNamespace('/'))
-server.start_background_task(buscarVentas, server=server)      
+server.start_background_task(buscarVentas, server=server, time_to_stop= config[2])      
 
 
 async def run_server():
